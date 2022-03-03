@@ -4,7 +4,7 @@
  * @gitee: https://gitee.com/chun22222222
  * @github: https://github.com/chun222
  * @Desc:
- * @LastEditTime: 2022-03-03 17:24:15
+ * @LastEditTime: 2022-03-03 17:35:18
  * @FilePath: \zt-printer\app\print\print.go
  */
 
@@ -102,6 +102,7 @@ func readTags(tags []string) (error, string) {
 
 func Ztprint(_PrintClass PrintClass) {
 	var err error
+	var printstr string
 
 	conn, err = net.Dial("tcp", config.Instance().App.PrinerIpPort)
 
@@ -110,7 +111,8 @@ func Ztprint(_PrintClass PrintClass) {
 		return
 	}
 
-	err, printstr := tempaltefile(_PrintClass, "./template/wb.txt")
+	//打印wb
+	err, printstr = tempaltefile(_PrintClass, "./template/wb.txt")
 	if err != nil {
 		fmt.Println("tempaltefile failed, err:", err)
 		return
@@ -122,6 +124,21 @@ func Ztprint(_PrintClass PrintClass) {
 		fmt.Println("recv failed, err:", err)
 		return
 	}
+
+	//打印nb
+	err, printstr = tempaltefile(_PrintClass, "./template/nb.txt")
+	if err != nil {
+		fmt.Println("tempaltefile failed, err:", err)
+		return
+	}
+	fmt.Println(printstr)
+	_, err = conn.Write([]byte(printstr)) //发送打印zpl文本
+
+	if err != nil {
+		fmt.Println("recv failed, err:", err)
+		return
+	}
+
 	fmt.Println("打印成功!")
 	defer conn.Close() // 关闭连接
 }
