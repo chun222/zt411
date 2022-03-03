@@ -1,0 +1,9 @@
+ 
+ 批次：{{.Lots}} 
+ 生产：{{.Produced}} 
+ 过期：{{.Expired}}
+ 毛重：{{.Gross}}
+ 净重：{{.Net}}
+ 桶号：{{.Bucket}}
+
+ 

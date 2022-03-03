@@ -1,0 +1,5 @@
+
+## 其他杂项配置
+[app]
+OpcServer = "localhost:2225"
+PrinerIpPort = "192.168.1.10:9100"
