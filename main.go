@@ -4,12 +4,9 @@
  * @gitee: https://gitee.com/chun22222222
  * @github: https://github.com/chun222
  * @Desc:
- * @LastEditTime: 2022-03-03 14:34:25
+ * @LastEditTime: 2022-03-03 17:32:19
  * @FilePath: \zt-printer\main.go
  */
-// tcp/server/main.go
-
-// TCP server端
 package main
 
 import (
@@ -22,7 +19,7 @@ func main() {
 	config.Instance()
 	for {
 		go print.Run()
-		time.Sleep(1 * time.Second)
+		time.Sleep(3 * time.Second) //时间太短可能导致未重置又开始打印
 	}
 
 }

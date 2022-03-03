@@ -3,3 +3,9 @@
 [app]
 OpcServer = "localhost:2225"
 PrinerIpPort = "192.168.1.10:9100"
+PrintStart ="test.AAA"    ##开始打印位号
+Lots ="test.EMS1"    ##批次位号
+Gross ="test.EMS2"    ##毛重位号
+Net ="test.EMS1"    ##净重位号
+Bucket ="test.EMS2"    ##桶号位号
+

@@ -1,9 +1,16 @@
  
+
+
+ ^XA 
+^LH00,00^FS 
+^CWJ,E:Arial.FNT 
+^FO10,10^AJN,50,50^FD HELLO WORLD ^FS 
+^PQ1,0,0,N 
  批次：{{.Lots}} 
  生产：{{.Produced}} 
  过期：{{.Expired}}
  毛重：{{.Gross}}
  净重：{{.Net}}
  桶号：{{.Bucket}}
-
- 
+ haha
+^XZ

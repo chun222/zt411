@@ -4,7 +4,7 @@
  * @gitee: https://gitee.com/chun22222222
  * @github: https://github.com/chun222
  * @Desc:
- * @LastEditTime: 2022-03-03 16:16:52
+ * @LastEditTime: 2022-03-03 17:24:15
  * @FilePath: \zt-printer\app\print\print.go
  */
 
@@ -48,21 +48,33 @@ type PrintClass struct {
 }
 
 func Run() {
+	startSign := config.Instance().App.PrintStart
+	BucketSign := config.Instance().App.Bucket
+	GrossSign := config.Instance().App.Gross
+	LotsSign := config.Instance().App.Lots
+	NetSign := config.Instance().App.Net
 
-	err, data := readTags([]string{"test.AAA"})
+	err, data := readTags([]string{startSign, BucketSign, GrossSign, LotsSign, NetSign})
 	obj := DataResult{}
 	if err == nil {
 		if err := json.Unmarshal([]byte(data), &obj); err != nil {
 			fmt.Println("err>>", err)
 		} else {
-			if sign, err := convert.Float(obj.Data["test.AAA"]); err != nil {
+			if sign, err := convert.Float(obj.Data[startSign]); err != nil {
 				fmt.Println("err>>", err)
 			} else {
 				fmt.Println("sign>>", sign)
 				if sign == 1 {
-					print()
+					_PrintClass := PrintClass{}
+					_PrintClass.Lots = convert.String(obj.Data[LotsSign])
+					_PrintClass.Produced = time.Now().Format("2006-01-02 15:04:05")
+					_PrintClass.Expired = time.Now().AddDate(1, 0, 0).Format("2006-01-02 15:04:05") //一年后时间
+					_PrintClass.Gross = convert.String(obj.Data[GrossSign])
+					_PrintClass.Net = convert.String(obj.Data[NetSign])
+					_PrintClass.Bucket = convert.String(obj.Data[BucketSign])
+					Ztprint(_PrintClass)
 					//重置信号
-					write("test.AAA", 0)
+					write(startSign, 0)
 				}
 			}
 		}
@@ -88,7 +100,7 @@ func readTags(tags []string) (error, string) {
 	return sendpost(url, jsonstr)
 }
 
-func print() {
+func Ztprint(_PrintClass PrintClass) {
 	var err error
 
 	conn, err = net.Dial("tcp", config.Instance().App.PrinerIpPort)
@@ -98,21 +110,13 @@ func print() {
 		return
 	}
 
-	_PrintClass := PrintClass{}
-	_PrintClass.Lots = "aaaaa"
-	_PrintClass.Produced = time.Now().Format("2006-01-02 15:04:05")
-	_PrintClass.Expired = time.Now().AddDate(1, 0, 0).Format("2006-01-02 15:04:05") //一年后时间
-	_PrintClass.Gross = "30kg"
-	_PrintClass.Net = "20kg"
-	_PrintClass.Bucket = "201"
-
 	err, printstr := tempaltefile(_PrintClass, "./template/wb.txt")
 	if err != nil {
 		fmt.Println("tempaltefile failed, err:", err)
 		return
 	}
 	fmt.Println(printstr)
-	//	_, err = conn.Write([]byte(printstr))
+	_, err = conn.Write([]byte(printstr)) //发送打印zpl文本
 
 	if err != nil {
 		fmt.Println("recv failed, err:", err)
